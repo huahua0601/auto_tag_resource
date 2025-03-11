@@ -40,7 +40,8 @@ class AutoTagResourceStack(Stack):
             "sns:TagResource", "sqs:ListQueueTags", "sqs:TagQueue", "es:AddTags", "kms:ListResourceTags", "kms:TagResource", "elasticfilesystem:TagResource", 
             "elasticfilesystem:CreateTags", "elasticfilesystem:DescribeTags", "elasticloadbalancing:AddTags", "logs:CreateLogGroup", "logs:CreateLogStream", 
             "logs:PutLogEvents", "tag:getResources", "tag:getTagKeys", "tag:getTagValues", "tag:TagResources", "tag:UntagResources", "cloudformation:DescribeStacks", 
-            "cloudformation:ListStackResources", "elasticache:DescribeReplicationGroups", "elasticache:DescribeCacheClusters", "elasticache:AddTagsToResource","resource-groups:*","GameLift:TagResource"]
+            "cloudformation:ListStackResources", "elasticache:DescribeReplicationGroups", "elasticache:DescribeCacheClusters", "elasticache:AddTagsToResource",
+            "resource-groups:*","GameLift:TagResource", "logs:TagLogGroup"]
         ))
 
         # create lambda function
@@ -59,12 +60,13 @@ class AutoTagResourceStack(Stack):
                         )
 
         _eventRule = _events.Rule(self, "resource-tagging-automation-rule",
+                        rule_name="resource-tagging-automation-rule",
                         event_pattern=_events.EventPattern(
-                            source=["aws.ec2", "aws.elasticloadbalancing", "aws.rds", "aws.lambda", "aws.s3", "aws.dynamodb", "aws.elasticfilesystem", "aws.es", "aws.sqs", "aws.sns", "aws.kms", "aws.elasticache", "aws.gamelift"],
+                            source=["aws.ec2", "aws.elasticloadbalancing", "aws.rds", "aws.lambda", "aws.s3", "aws.dynamodb", "aws.elasticfilesystem", "aws.es", "aws.sqs", "aws.sns", "aws.kms", "aws.elasticache", "aws.gamelift", "aws.logs"],
                             detail_type=["AWS API Call via CloudTrail"],
                             detail={
-                                "eventSource": ["ec2.amazonaws.com", "elasticloadbalancing.amazonaws.com", "s3.amazonaws.com", "rds.amazonaws.com", "lambda.amazonaws.com", "dynamodb.amazonaws.com", "elasticfilesystem.amazonaws.com", "es.amazonaws.com", "sqs.amazonaws.com", "sns.amazonaws.com", "kms.amazonaws.com", "elasticache.amazonaws.com", "gamelift.amazonaws.com"],
-                                "eventName": ["RunInstances", "CreateFunction20150331", "CreateBucket", "CreateDBInstance", "CreateTable", "CreateVolume", "CreateLoadBalancer", "CreateMountTarget", "CreateDomain", "CreateQueue", "CreateTopic", "CreateKey", "CreateReplicationGroup", "CreateCacheCluster", "ModifyReplicationGroupShardConfiguration", "CreateFleet"]
+                                "eventSource": ["ec2.amazonaws.com", "elasticloadbalancing.amazonaws.com", "s3.amazonaws.com", "rds.amazonaws.com", "lambda.amazonaws.com", "dynamodb.amazonaws.com", "elasticfilesystem.amazonaws.com", "es.amazonaws.com", "sqs.amazonaws.com", "sns.amazonaws.com", "kms.amazonaws.com", "elasticache.amazonaws.com", "gamelift.amazonaws.com", "logs.amazonaws.com"],
+                                "eventName": ["RunInstances", "CreateFunction20150331", "CreateBucket", "CreateDBInstance", "CreateTable", "CreateVolume", "CreateLoadBalancer", "CreateMountTarget", "CreateDomain", "CreateQueue", "CreateTopic", "CreateKey", "CreateReplicationGroup", "CreateCacheCluster", "ModifyReplicationGroupShardConfiguration", "CreateFleet", "CreateLogGroup"]
                             }
                         )
                     )

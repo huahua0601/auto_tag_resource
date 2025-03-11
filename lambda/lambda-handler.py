@@ -152,6 +152,11 @@ def aws_gamelift(event):
         arnList.append(event['detail']['responseElements']['fleetAttributes']['fleetArn'])
         return arnList
 
+def aws_logs(event):
+    arnList = []
+    # dont need to get ARN for aws logs.
+    return arnList
+
 def aws_elasticache(event):
     arnList = []
     _account = event['account']
@@ -227,6 +232,17 @@ def main(event, context):
             response = client.tag_resource(
                 ResourceARN=arn,
                 Tags=tags
+            )
+    if _method == 'aws_logs':
+        client = boto3.client('logs')
+        # Convert list of key-value pairs to dictionary for CloudWatch Logs
+        tags = {key: value for key, value in _res_tags.items()}
+        if event['detail']['eventName'] == 'CreateLogGroup':
+            print("tagging for new cloudwatch logs...")
+            _logGroupName = event['detail']['requestParameters']['logGroupName']
+            response = client.tag_log_group(
+                logGroupName=_logGroupName,
+                tags=tags
             )
     # DocumentDB
     elif _method == 'aws_rds' and event['detail']['responseElements']['engine'] and event['detail']['responseElements']['engine'] == 'docdb':
